@@ -811,7 +811,6 @@ int32_t l3gd20h_gy_filter_hp_bandwidth_get(const stmdev_ctx_t *ctx,
   l3gd20h_ctrl2_t ctrl2;
   int32_t ret;
   ret = l3gd20h_read_reg(ctx, L3GD20H_CTRL2, (uint8_t *)&ctrl2, 1);
-  ret += l3gd20h_read_reg(ctx, L3GD20H_CTRL2, (uint8_t *)&ctrl2, 1);
 
   if (ret != 0) { return ret; }
 
@@ -2119,6 +2118,9 @@ int32_t l3gd20h_fifo_watermark_get(const stmdev_ctx_t *ctx, uint8_t *val)
   l3gd20h_fifo_ctrl_t fifo_ctrl;
   int32_t ret;
   ret = l3gd20h_read_reg(ctx, L3GD20H_FIFO_CTRL, (uint8_t *)&fifo_ctrl, 1);
+
+  if (ret != 0) { return ret; }
+
   *val = fifo_ctrl.fth;
 
   return ret;
@@ -2138,6 +2140,9 @@ int32_t l3gd20h_fifo_src_get(const stmdev_ctx_t *ctx,
   l3gd20h_fifo_src_t fifo_src;
   int32_t ret;
   ret = l3gd20h_read_reg(ctx, L3GD20H_FIFO_SRC, (uint8_t *)&fifo_src, 1);
+
+  if (ret != 0) { return ret; }
+
   val->fss = fifo_src.fss;
   val->empty = fifo_src.empty;
   val->ovrn = fifo_src.ovrn;
@@ -2159,6 +2164,9 @@ int32_t l3gd20h_fifo_data_level_get(const stmdev_ctx_t *ctx, uint8_t *val)
   l3gd20h_fifo_src_t fifo_src;
   int32_t ret;
   ret = l3gd20h_read_reg(ctx, L3GD20H_FIFO_SRC, (uint8_t *)&fifo_src, 1);
+
+  if (ret != 0) { return ret; }
+
   *val = fifo_src.fss;
 
   return ret;
@@ -2177,6 +2185,9 @@ int32_t l3gd20h_fifo_full_flag_get(const stmdev_ctx_t *ctx, uint8_t *val)
   l3gd20h_fifo_src_t fifo_src;
   int32_t ret;
   ret = l3gd20h_read_reg(ctx, L3GD20H_FIFO_SRC, (uint8_t *)&fifo_src, 1);
+
+  if (ret != 0) { return ret; }
+
   *val = fifo_src.fss;
 
   return ret;
@@ -2195,6 +2206,9 @@ int32_t l3gd20h_fifo_wtm_flag_get(const stmdev_ctx_t *ctx, uint8_t *val)
   l3gd20h_fifo_src_t fifo_src;
   int32_t ret;
   ret = l3gd20h_read_reg(ctx, L3GD20H_FIFO_SRC, (uint8_t *)&fifo_src, 1);
+
+  if (ret != 0) { return ret; }
+
   *val = fifo_src.fth;
 
   return ret;
@@ -2262,11 +2276,9 @@ int32_t l3gd20h_den_mode_get(const stmdev_ctx_t *ctx, l3gd20h_den_md_t *val)
   l3gd20h_ctrl4_t ctrl4;
   int32_t ret;
   ret = l3gd20h_read_reg(ctx, L3GD20H_CTRL4, (uint8_t *)&ctrl4, 1);
+  ret += l3gd20h_read_reg(ctx, L3GD20H_CTRL2, (uint8_t *)&ctrl2, 1);
 
-  if (ret == 0)
-  {
-    ret = l3gd20h_read_reg(ctx, L3GD20H_CTRL2, (uint8_t *)&ctrl2, 1);
-  }
+  if (ret != 0) { return ret; }
 
   switch ((ctrl2.lvlen << 2) + (ctrl2.extren << 1) + ctrl4.impen)
   {
@@ -2343,6 +2355,8 @@ int32_t l3gd20h_gy_self_test_get(const stmdev_ctx_t *ctx, l3gd20h_st_t *val)
   l3gd20h_ctrl4_t ctrl4;
   int32_t ret;
   ret = l3gd20h_read_reg(ctx, L3GD20H_CTRL4, (uint8_t *)&ctrl4, 1);
+
+  if (ret != 0) { return ret; }
 
   switch (ctrl4.st)
   {
