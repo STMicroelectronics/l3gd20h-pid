@@ -197,8 +197,8 @@ int32_t l3gd20h_gy_data_rate_set(const stmdev_ctx_t *ctx,
 
   if (ret == 0)
   {
-    ctrl1.pd = ((uint8_t)val & 0x80U) >> 7;
-    ctrl1.dr = (uint8_t)val & 0x07U;
+    ctrl1.pd = ((uint8_t)val >> 7) & 0x01U;
+    ctrl1.dr = (uint8_t)val & 0x03U;
     ret = l3gd20h_write_reg(ctx, L3GD20H_CTRL1, (uint8_t *)&ctrl1, 1);
   }
 
@@ -294,7 +294,7 @@ int32_t l3gd20h_gy_full_scale_set(const stmdev_ctx_t *ctx,
 
   if (ret == 0)
   {
-    ctrl4.fs = (uint8_t)val;
+    ctrl4.fs = (uint8_t)val & 0x03U;
     ret = l3gd20h_write_reg(ctx, L3GD20H_CTRL4, (uint8_t *)&ctrl4, 1);
   }
 
@@ -355,7 +355,7 @@ int32_t l3gd20h_block_data_update_set(const stmdev_ctx_t *ctx, uint8_t val)
 
   if (ret == 0)
   {
-    ctrl4.bdu = val;
+    ctrl4.bdu = val & 0x01U;
     ret = l3gd20h_write_reg(ctx, L3GD20H_CTRL4, (uint8_t *)&ctrl4, 1);
   }
 
@@ -449,12 +449,9 @@ int32_t l3gd20h_angular_rate_raw_get(const stmdev_ctx_t *ctx, int16_t *val)
   ret = l3gd20h_read_reg(ctx, L3GD20H_OUT_X_L, buff, 6);
   if (ret != 0) { return ret; }
 
-  val[0] = (int16_t)buff[1];
-  val[0] = (val[0] * 256) + (int16_t)buff[0];
-  val[1] = (int16_t)buff[3];
-  val[1] = (val[1] * 256) + (int16_t)buff[2];
-  val[2] = (int16_t)buff[5];
-  val[2] = (val[2] * 256) + (int16_t)buff[4];
+  val[0] = (int16_t)(buff[0] | ((uint16_t)buff[1] << 8));
+  val[1] = (int16_t)(buff[2] | ((uint16_t)buff[3] << 8));
+  val[2] = (int16_t)(buff[4] | ((uint16_t)buff[5] << 8));
 
   return ret;
 }
@@ -504,7 +501,7 @@ int32_t l3gd20h_dev_data_format_set(const stmdev_ctx_t *ctx,
 
   if (ret == 0)
   {
-    ctrl4.ble = (uint8_t)val;
+    ctrl4.ble = (uint8_t)val & 0x01U;
     ret = l3gd20h_write_reg(ctx, L3GD20H_CTRL4, (uint8_t *)&ctrl4, 1);
   }
 
@@ -562,7 +559,7 @@ int32_t l3gd20h_dev_boot_set(const stmdev_ctx_t *ctx, uint8_t val)
 
   if (ret == 0)
   {
-    ctrl5.boot = val;
+    ctrl5.boot = val & 0x01U;
     ret = l3gd20h_write_reg(ctx, L3GD20H_CTRL5, (uint8_t *)&ctrl5, 1);
   }
 
@@ -634,7 +631,7 @@ int32_t l3gd20h_dev_reset_set(const stmdev_ctx_t *ctx, uint8_t val)
 
   if (ret == 0)
   {
-    low_odr.sw_res = val;
+    low_odr.sw_res = val & 0x01U;
     ret = l3gd20h_write_reg(ctx, L3GD20H_LOW_ODR, (uint8_t *)&low_odr, 1);
   }
 
@@ -692,7 +689,7 @@ int32_t l3gd20h_gy_filter_lp_bandwidth_set(const stmdev_ctx_t *ctx,
 
   if (ret == 0)
   {
-    ctrl1.bw = (uint8_t)val;
+    ctrl1.bw = (uint8_t)val & 0x03U;
     ret = l3gd20h_write_reg(ctx, L3GD20H_CTRL1, (uint8_t *)&ctrl1, 1);
   }
 
@@ -1076,7 +1073,7 @@ int32_t l3gd20h_spi_mode_set(const stmdev_ctx_t *ctx, l3gd20h_sim_t val)
 
   if (ret == 0)
   {
-    ctrl4.sim = (uint8_t)val;
+    ctrl4.sim = (uint8_t)val & 0x01U;
     ret = l3gd20h_write_reg(ctx, L3GD20H_CTRL4, (uint8_t *)&ctrl4, 1);
   }
 
@@ -1134,7 +1131,7 @@ int32_t l3gd20h_i2c_interface_set(const stmdev_ctx_t *ctx,
 
   if (ret == 0)
   {
-    low_odr.i2c_dis = (uint8_t)val;
+    low_odr.i2c_dis = (uint8_t)val & 0x01U;
     ret = l3gd20h_write_reg(ctx, L3GD20H_LOW_ODR, (uint8_t *)&low_odr, 1);
   }
 
@@ -1255,7 +1252,7 @@ int32_t l3gd20h_pin_mode_set(const stmdev_ctx_t *ctx, l3gd20h_pp_od_t val)
 
   if (ret == 0)
   {
-    ctrl3.pp_od = (uint8_t)val;
+    ctrl3.pp_od = (uint8_t)val & 0x01U;
     ret = l3gd20h_write_reg(ctx, L3GD20H_CTRL3, (uint8_t *)&ctrl3, 1);
   }
 
@@ -1314,7 +1311,7 @@ int32_t l3gd20h_pin_polarity_set(const stmdev_ctx_t *ctx,
 
   if (ret == 0)
   {
-    low_odr.drdy_hl = (uint8_t)val;
+    low_odr.drdy_hl = (uint8_t)val & 0x01U;
     ret = l3gd20h_write_reg(ctx, L3GD20H_LOW_ODR, (uint8_t *)&low_odr, 1);
   }
 
@@ -1325,7 +1322,7 @@ int32_t l3gd20h_pin_polarity_set(const stmdev_ctx_t *ctx,
 
   if (ret == 0)
   {
-    ctrl3.h_lactive = (uint8_t)val;
+    ctrl3.h_lactive = (uint8_t)val & 0x01U;
     ret = l3gd20h_write_reg(ctx, L3GD20H_CTRL3, (uint8_t *)&ctrl3, 1);
   }
 
@@ -1432,7 +1429,7 @@ int32_t l3gd20h_pin_notification_set(const stmdev_ctx_t *ctx,
 
   if (ret == 0)
   {
-    ig_cfg.lir = (uint8_t)val;
+    ig_cfg.lir = (uint8_t)val & 0x01U;
     ret = l3gd20h_write_reg(ctx, L3GD20H_IG_CFG, (uint8_t *)&ig_cfg, 1);
   }
 
@@ -1492,7 +1489,7 @@ int32_t l3gd20h_pin_logic_set(const stmdev_ctx_t *ctx,
 
   if (ret == 0)
   {
-    ig_cfg.and_or = (uint8_t)val;
+    ig_cfg.and_or = (uint8_t)val & 0x01U;
     ret = l3gd20h_write_reg(ctx, L3GD20H_IG_CFG, (uint8_t *)&ig_cfg, 1);
   }
 
@@ -1714,7 +1711,7 @@ int32_t l3gd20h_gy_trshld_mode_set(const stmdev_ctx_t *ctx,
 
   if (ret == 0)
   {
-    ig_ths_xh.dcrm = (uint8_t)val;
+    ig_ths_xh.dcrm = (uint8_t)val & 0x01U;
     ret = l3gd20h_write_reg(ctx, L3GD20H_IG_THS_XH, (uint8_t *)&ig_ths_xh, 1);
   }
 
@@ -1902,7 +1899,7 @@ int32_t l3gd20h_gy_trshld_min_sample_set(const stmdev_ctx_t *ctx,
 
   if (ret == 0)
   {
-    ig_duration.d = val;
+    ig_duration.d = val & 0x7FU;
 
     if (val != 0x00U)
     {
@@ -1972,7 +1969,7 @@ int32_t l3gd20h_fifo_stop_on_wtm_set(const stmdev_ctx_t *ctx, uint8_t val)
 
   if (ret == 0)
   {
-    ctrl5.stoponfth = val;
+    ctrl5.stoponfth = val & 0x01U;
     ret = l3gd20h_write_reg(ctx, L3GD20H_CTRL5, (uint8_t *)&ctrl5, 1);
   }
 
@@ -2106,7 +2103,7 @@ int32_t l3gd20h_fifo_watermark_set(const stmdev_ctx_t *ctx, uint8_t val)
 
   if (ret == 0)
   {
-    fifo_ctrl.fth = val;
+    fifo_ctrl.fth = val & 0x1FU;
     ret = l3gd20h_write_reg(ctx, L3GD20H_FIFO_CTRL, (uint8_t *)&fifo_ctrl, 1);
   }
 
@@ -2151,7 +2148,7 @@ int32_t l3gd20h_fifo_src_get(const stmdev_ctx_t *ctx,
 
   if (ret != 0) { return ret; }
 
-  val->fss = fifo_src.fss;
+  val->fss = fifo_src.fss != 0 ? 0x01U : 0x00U;
   val->empty = fifo_src.empty;
   val->ovrn = fifo_src.ovrn;
   val->fth = fifo_src.fth;
@@ -2343,7 +2340,7 @@ int32_t l3gd20h_gy_self_test_set(const stmdev_ctx_t *ctx, l3gd20h_st_t val)
 
   if (ret == 0)
   {
-    ctrl4.st = (uint8_t)val;
+    ctrl4.st = (uint8_t)val & 0x03U;
     ret = l3gd20h_write_reg(ctx, L3GD20H_CTRL4, (uint8_t *)&ctrl4, 1);
   }
 
